@@ -2,9 +2,9 @@ clear all
 close all
 clc
 
-cd('C:\GitHub_IsletCellType\Example_Data')
+cd('C:\IsletCellType_GitHub\Example_Data')
 
-path(path,'C:\GitHub_IsletCellType\Matlab_Functions')
+path(path,'C:\IsletCellType_GitHub\Matlab_Functions')
 
 Matrix=xlsread('Example_Data.xlsx'); % reads ExampleData into Matrix
 

@@ -1,0 +1,168 @@
+# Delta-cell Model
+# L. Briant et al.
+# Figure 7 from paper
+
+#initial conditions
+v(0)=-52.91
+mcal(0)=0.092
+hcal(0)=0.857
+mcat(0)=0.27
+hcat(0)=0.534
+mcan(0)=0.008
+hcan(0)=0.857
+mna(0)=0.003
+hna(0)=0.339
+mka(0)=0.312
+hka(0)=0.182
+mkdr(0)=0.237
+
+#parameters
+par gkatp=0.01
+par gna=11
+par gka=1.2
+par gkdr=4.5
+par vna=60
+par vk=-75
+par vca=65
+par vl=-40
+par cm=4e-3
+par gcal=0.65
+par gcat=0.05
+par gcan=0.3
+par on=0
+par gl=0.1
+
+par vcalm=-30
+par scalm=10
+par vcalh=-33
+par scalh=-5
+par tcalh1=60
+par tcalh2=51
+
+par vcatm=-49
+par scatm=4
+par vcath=-52
+par scath=-5
+par tcatm1=15
+par tcatm2=0
+par tcath1=20
+par tcath2=5
+
+par vcanm=-5
+par scanm=10
+par vcanh=-33
+par scanh=-5
+par tcanh1=2
+par tcanh2=2
+
+par vnam=-30
+par vnah=-52
+par snam=4
+par snah=-8
+par tnah1=120
+par tnah2=0.5
+
+par vkam=-45
+par skam=10
+par vkah=-68
+par skah=-10
+par taukam=0.1
+par tkah1=60
+par tkah2=5
+
+par taukm=1
+par vkdrm=-25
+par skdrm=23
+
+#na parameters fit using method of Willms et al
+
+par V2m=-28.8749674
+par sm=-5.45289598	
+par V2h=-45.388663
+par sh=4.99005762
+par f1=1
+par a1taum=0.0001072
+par b1taum=12
+par c1taum=40
+par a2taum=0.000152
+par b2taum=-20
+par c2taum=22.69
+par a1tauh=0.0001636
+par b1tauh=-15
+par c1tauh=8.6856
+par a2tauh=0.0001857)
+par b2tauh=5
+par c2tauh=35.35
+
+#functions
+mcalinf=1/(1+exp(-(v-vcalm)/scalm))
+hcalinf=1/(1+exp(-(v-vcalh)/scalh))
+taucalm=(1/(exp(-(v+23)/20)+exp((v+23)/20)))+0.05
+taucalh=(tcalh1/(exp(-(v+0)/20)+exp((v+0)/20)))+tcalh2
+Ical=gcal*mcal^2*hcal*(v-vca)
+aux Ical=ical
+
+mcatinf=1/(1+exp(-(v-vcatm)/scatm))
+hcatinf=1/(1+exp(-(v-vcath)/scath))
+taucatm=(tcatm1/(exp(-(v+50)/12)+exp((v+50)/12)))+tcatm2
+taucath=(tcath1/(exp(-(v+50)/15)+exp((v+50)/15)))+tcath2
+Icat=gcat*mcat^3*hcat*(v-vca)
+aux Icat=icat
+
+mcaninf=1/(1+exp(-(v-vcanm)/scanm))
+hcaninf=1/(1+exp(-(v-vcanh)/scanh))
+taucanm=(1/(exp(-(v+23)/20)+exp((v+23)/20)))+0.05
+taucanh=(tcanh1/(exp(-(v+0)/20)+exp((v+0)/20)))+tcanh2
+Ican=gcan*mcan*hcan*(v-vca)
+aux Ican=ican
+
+mnainf=1/(1+exp((v-V2m)/sm))
+hnainf=1/(1+exp((v-V2h)/sh))
+taunam=1e3*(a1taum*exp(-((v-b1taum)/c1taum)^2)+a2taum*exp(-((v-b2taum)/c2taum)^2))
+taunah=1e3*(a1tauh*exp(-((v-b1tauh)/c1tauh)^2)+a2tauh*exp(-((v-b2tauh)/c2tauh)^2))
+Ina=gna*mna^5*hna*(v-vna)
+aux Ina=ina
+
+par nka=1
+
+mkainf=1/(1+exp(-(v-vkam)/skam))
+hkainf=1/(1+exp(-(v-vkah)/skah))
+taukah=(tkah1/(exp(-(v-5)/20)+exp((v-5)/20)))+tkah2
+Ika=gka*mka^nka*hka*(v-vk)
+aux Ika=ika
+
+mkdrinf=1/(1+exp(-(v-vkdrm)/skdrm))
+taukdrm=taukm*((1.5/(exp(-(v+10)/25)+exp((v+10)/25)))+15)
+Ikdr=gkdr*mkdr^4*(v-vk)
+aux Ikdr=ikdr
+
+Ikatp=gkatp*(v-vk)
+
+Il=gl*(v-vl)
+
+par tcalh=1
+par tcalm=1
+par tcatm=1
+par tcath=1
+par tcanm=1
+par tcanh=1
+
+#odes
+v'=-(Ical+Icat+Ican+Ina+Ikdr+Ikatp+Ika+Il)/cm
+mcal'=(mcalinf-mcal)/(tcalm*taucalm)
+hcal'=(hcalinf-hcal)/(tcalh*taucalh)
+mcat'=(mcatinf-mcat)/(tcatm*taucatm)
+hcat'=(hcatinf-hcat)/(tcath*taucath)
+mcan'=(mcaninf-mcan)/(tcanm*taucanm)
+hcan'=(hcaninf-hcan)/(tcanh*taucanh)
+mna'=(mnainf-mna)/taunam
+hna'=(hnainf-hna)/taunah
+mka'=(mkainf-mka)/taukam
+hka'=(hkainf-hka)/taukah
+mkdr'=(mkdrinf-mkdr)/taukdrm
+
+@ meth=cvode, toler=1.0e-10, atoler=1.0e-10, dt=0.1, total=2000
+@ bounds=10000000, bell=0, xp=t, yp=v
+@ xlo=0, xhi=2000, ylo=-65, yhi=30, delay=15000
+
+done

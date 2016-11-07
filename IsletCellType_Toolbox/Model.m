@@ -269,7 +269,7 @@ elseif(ACurrent==2);
     Transient = 1;
 end
 
-path(path,'C:\GitHub_IsletCellType\Matlab_Functions');
+path(path,'C:\IsletCellType_GitHub\Matlab_Functions');
 
 [Probability_abd,CellTypeNumber] = IsletCellType(R_Access,Leak,MaxCurrent,V_Hinf,Transient,Tail,CellCap,K_Hinf);
 
